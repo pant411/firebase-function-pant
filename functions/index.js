@@ -9,6 +9,10 @@
 
 const {onRequest} = require("firebase-functions/v2/https");
 
+const cors = require("cors")({
+  origin: true,
+});
+
 // import firebase
 const admin = require("firebase-admin");
 const serviceAccount =
@@ -31,12 +35,14 @@ const db = admin.firestore();
 //   response.send("Hello from Firebase!");
 // });
 
-exports.getListSchoolPantchanit = onRequest(async (_, res) => {
-  const schoolsColl = db.collection("schools");
-  const listSchools = await schoolsColl.get();
-  const responseSchools = [];
-  listSchools.forEach((ele) => {
-    responseSchools.push(ele.data());
+exports.getListSchoolPantchanit = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    const schoolsColl = db.collection("schools");
+    const listSchools = await schoolsColl.get();
+    const responseSchools = [];
+    listSchools.forEach((ele) => {
+      responseSchools.push(ele.data());
+    });
+    res.send(responseSchools);
   });
-  res.send(responseSchools);
 });
